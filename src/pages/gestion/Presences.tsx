@@ -249,7 +249,7 @@ function AValider({ onChange }: { onChange: () => void }) {
             { titre: 'Localisation', rendu: (p) => (p.latitude ? <span className="text-xs text-marque-700">Position jointe</span> : <span className="text-xs text-slate-400">—</span>) },
           ]}
         />
-        <Pagination page={l.donnees} onPage={l.setPage} />
+        <Pagination page={l.donnees} onPage={l.setPage} onParPage={l.changerParPage} />
       </Carte>
     </>
   )
@@ -294,7 +294,7 @@ function Historique() {
             { titre: 'Mode', rendu: (p) => <span className="text-xs text-slate-500">{p.mode === 'pointage' ? 'Pointage agent' : 'Saisie chef'}</span> },
           ]}
         />
-        <Pagination page={l.donnees} onPage={l.setPage} />
+        <Pagination page={l.donnees} onPage={l.setPage} onParPage={l.changerParPage} />
       </Carte>
     </>
   )

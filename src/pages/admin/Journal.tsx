@@ -28,7 +28,7 @@ export default function Journal() {
             { titre: 'Adresse IP', rendu: (j) => <span className="font-mono text-xs text-slate-500">{j.adresse_ip ?? '—'}</span> },
           ]}
         />
-        <Pagination page={l.donnees} onPage={l.setPage} />
+        <Pagination page={l.donnees} onPage={l.setPage} onParPage={l.changerParPage} />
       </Carte>
     </div>
   )

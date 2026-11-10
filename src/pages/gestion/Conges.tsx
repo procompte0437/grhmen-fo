@@ -77,7 +77,7 @@ export default function Conges() {
             },
           ]}
         />
-        <Pagination page={l.donnees} onPage={l.setPage} />
+        <Pagination page={l.donnees} onPage={l.setPage} onParPage={l.changerParPage} />
       </Carte>
       <FenetreDecision demande={decision} onFermer={() => setDecision(null)} onTermine={() => { l.recharger(); rafraichirBadges() }} />
     </div>

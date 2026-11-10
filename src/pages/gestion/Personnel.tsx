@@ -100,7 +100,7 @@ export default function Personnel() {
             { titre: 'Compte', rendu: (a) => (a.a_un_compte ? <Pastille ton="vert">Oui</Pastille> : <Pastille>Non</Pastille>) },
           ]}
         />
-        <Pagination page={l.donnees} onPage={l.setPage} />
+        <Pagination page={l.donnees} onPage={l.setPage} onParPage={l.changerParPage} />
       </Carte>
       <FormulaireAgent
         ouvert={formulaire}

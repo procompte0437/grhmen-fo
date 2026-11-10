@@ -89,7 +89,7 @@ export default function Utilisateurs() {
             },
           ]}
         />
-        <Pagination page={l.donnees} onPage={l.setPage} />
+        <Pagination page={l.donnees} onPage={l.setPage} onParPage={l.changerParPage} />
       </Carte>
 
       <Modale ouverte={!!edition} large titre={edition?.id ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur'} onFermer={() => setEdition(null)} pied={<><button className="btn btn-secondaire" onClick={() => setEdition(null)}>Annuler</button><button className="btn btn-primaire" form="form-user">Enregistrer</button></>}>

@@ -64,13 +64,31 @@ export function Tableau<T extends { id?: number }>({ colonnes, lignes, chargemen
   )
 }
 
-export function Pagination({ page, onPage }: { page: Page<unknown> | null; onPage: (p: number) => void }) {
+export const TAILLES_PAGE = [3, 5, 10, 15, 25, 50, 100]
+
+export function Pagination({ page, onPage, onParPage }: { page: Page<unknown> | null; onPage: (p: number) => void; onParPage?: (n: number) => void }) {
   if (!page || page.total === 0) return null
+  const tailles = TAILLES_PAGE.includes(Number(page.per_page)) ? TAILLES_PAGE : [...TAILLES_PAGE, Number(page.per_page)].sort((a, b) => a - b)
   return (
     <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 px-4 py-3 text-sm text-slate-600">
-      <span>
-        {page.from}–{page.to} sur <strong>{page.total.toLocaleString('fr-FR')}</strong>
-      </span>
+      <div className="flex flex-wrap items-center gap-3">
+        {onParPage && (
+          <label className="flex items-center gap-2">
+            <span className="whitespace-nowrap">Afficher</span>
+            <select className="champ w-auto py-1 pr-8" value={Number(page.per_page)} onChange={(e) => onParPage(Number(e.target.value))} aria-label="Nombre de lignes par page">
+              {tailles.map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+            <span className="whitespace-nowrap">lignes</span>
+          </label>
+        )}
+        <span>
+          {page.from}–{page.to} sur <strong>{page.total.toLocaleString('fr-FR')}</strong>
+        </span>
+      </div>
       <div className="flex items-center gap-1">
         <button type="button" className="btn btn-secondaire px-3 py-1" disabled={page.current_page <= 1} onClick={() => onPage(page.current_page - 1)}>
           Précédent
@@ -94,13 +112,23 @@ export function useListe<T>(url: string, filtresInitiaux: Record<string, string>
   const [chargement, setChargement] = useState(true)
   const [erreur, setErreur] = useState<string | null>(null)
   const [version, setVersion] = useState(0)
+  // Nombre de lignes par page choisi (sinon la valeur par défaut de l'API), mémorisé par écran.
+  const cleTaille = 'grhmen.lignes.' + url
+  const [parPage, setParPage] = useState<number | null>(() => {
+    try {
+      const v = Number(localStorage.getItem(cleTaille))
+      return v > 0 ? v : null
+    } catch {
+      return null
+    }
+  })
   const minuterie = useRef<number | undefined>(undefined)
 
   useEffect(() => {
     window.clearTimeout(minuterie.current)
     minuterie.current = window.setTimeout(() => {
       setChargement(true)
-      const params = Object.fromEntries(Object.entries({ ...filtres, page: String(page) }).filter(([, v]) => v !== '' && v !== undefined))
+      const params = Object.fromEntries(Object.entries({ ...filtres, page: String(page), par_page: parPage ? String(parPage) : '' }).filter(([, v]) => v !== '' && v !== undefined))
       api
         .get(url, { params })
         .then((r) => {
@@ -111,14 +139,27 @@ export function useListe<T>(url: string, filtresInitiaux: Record<string, string>
         .finally(() => setChargement(false))
     }, 250)
     return () => window.clearTimeout(minuterie.current)
-  }, [url, filtres, page, version])
+  }, [url, filtres, page, parPage, version])
 
   const filtrer = useCallback((cle: string, valeur: string) => {
     setFiltres((f) => ({ ...f, [cle]: valeur }))
     setPage(1)
   }, [])
 
+  const changerParPage = useCallback(
+    (n: number) => {
+      setParPage(n)
+      setPage(1)
+      try {
+        localStorage.setItem(cleTaille, String(n))
+      } catch {
+        /* stockage indisponible */
+      }
+    },
+    [cleTaille],
+  )
+
   const recharger = useCallback(() => setVersion((v) => v + 1), [])
 
-  return { donnees, lignes: donnees?.data ?? [], chargement, erreur, filtres, filtrer, setFiltres, page, setPage, recharger }
+  return { donnees, lignes: donnees?.data ?? [], chargement, erreur, filtres, filtrer, setFiltres, page, setPage, parPage, changerParPage, recharger }
 }

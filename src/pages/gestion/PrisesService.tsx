@@ -106,7 +106,7 @@ function ListePrises({ statut, onChange }: { statut: string; onChange: () => voi
             },
           ]}
         />
-        <Pagination page={l.donnees} onPage={l.setPage} />
+        <Pagination page={l.donnees} onPage={l.setPage} onParPage={l.changerParPage} />
       </Carte>
       <FenetreDecision demande={decision} onFermer={() => setDecision(null)} onTermine={() => { l.recharger(); onChange() }} />
     </>
@@ -171,7 +171,7 @@ function Attendues({ onChange }: { onChange: () => void }) {
             },
           ]}
         />
-        <Pagination page={l.donnees} onPage={l.setPage} />
+        <Pagination page={l.donnees} onPage={l.setPage} onParPage={l.changerParPage} />
       </Carte>
       <Modale
         ouverte={!!cible}

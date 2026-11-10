@@ -118,7 +118,7 @@ export default function Cessations() {
             },
           ]}
         />
-        <Pagination page={l.donnees} onPage={l.setPage} />
+        <Pagination page={l.donnees} onPage={l.setPage} onParPage={l.changerParPage} />
       </Carte>
 
       <FormulaireCessation ouvert={formulaire} onFermer={() => setFormulaire(false)} onEnregistre={() => { setFormulaire(false); l.recharger(); rafraichirBadges() }} />

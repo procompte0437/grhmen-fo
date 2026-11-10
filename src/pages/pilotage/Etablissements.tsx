@@ -104,7 +104,7 @@ export default function Etablissements() {
             },
           ]}
         />
-        <Pagination page={l.donnees} onPage={l.setPage} />
+        <Pagination page={l.donnees} onPage={l.setPage} onParPage={l.changerParPage} />
       </Carte>
       <FormulaireEtablissement ouvert={formulaire.ouvert} etab={formulaire.etab} onFermer={() => setFormulaire({ ouvert: false })} onEnregistre={() => { setFormulaire({ ouvert: false }); l.recharger() }} />
       <FenetreDecision demande={decision} onFermer={() => setDecision(null)} onTermine={l.recharger} />

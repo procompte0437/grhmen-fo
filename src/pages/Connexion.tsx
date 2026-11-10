@@ -19,19 +19,10 @@ const COMPTES_DEMO = [
   ['agent@grhmen.ga', 'Agent administratif (DGRH)'],
 ]
 
-/** Logo de l'application : pictogramme (personnel + élan jaune) et nom GRHMEN. */
+/** Nom de l'application GRHMEN (sans pictogramme). */
 function LogoGrhmen() {
   return (
-    <div className="flex items-center justify-center gap-3">
-      <svg viewBox="0 0 64 64" className="h-16 w-16" aria-hidden="true">
-        <path d="M8 26 32 10l24 16v4H8z" fill="#14563a" />
-        <rect x="12" y="30" width="40" height="22" rx="2" fill="#14563a" />
-        <circle cx="24" cy="38" r="4" fill="#fff" />
-        <circle cx="40" cy="38" r="4" fill="#fff" />
-        <path d="M17 50c0-5 3-7 7-7s7 2 7 7M33 50c0-5 3-7 7-7s7 2 7 7" fill="#fff" />
-        <path d="M4 50c14 10 40 10 58-12l-4-1 6-5 1 8-3-2C46 54 18 58 4 50z" fill="#fcd116" />
-        <rect x="30" y="52" width="4" height="9" fill="#2f62a8" />
-      </svg>
+    <div className="flex items-center justify-center">
       <span className="text-[44px] font-black leading-none tracking-tight text-[#14205a]">
         GRH<span className="text-marque-800">MEN</span>
       </span>

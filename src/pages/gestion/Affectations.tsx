@@ -112,7 +112,7 @@ export default function Affectations() {
             },
           ]}
         />
-        <Pagination page={l.donnees} onPage={l.setPage} />
+        <Pagination page={l.donnees} onPage={l.setPage} onParPage={l.changerParPage} />
       </Carte>
       <FormulaireAffectation
         ouvert={formulaire.ouvert}
