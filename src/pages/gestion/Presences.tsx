@@ -114,6 +114,7 @@ function Feuille({ onChange }: { onChange: () => void }) {
           </div>
         )}
       </div>
+      {listes?.feries?.[date] && <Alerte ton="bleu" titre="Jour férié">Le {dateFr(date)} est un jour férié ({listes.feries[date]}) : aucune présence n'est attendue.</Alerte>}
       {!etab && <Alerte ton="bleu">Choisissez un établissement pour afficher sa feuille de présence.</Alerte>}
       {erreur && <Alerte ton="rouge">{erreur}</Alerte>}
       {etab && !d && !erreur && <Chargement />}

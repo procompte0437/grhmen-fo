@@ -3,6 +3,7 @@ import { NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react-route
 import { useSession } from '../../context/AuthContext'
 import { initiales } from '../../lib/format'
 import type { OptionAcces } from '../../types'
+import { MINISTERE } from '../../lib/ministere'
 import Icone from '../ui/Icone'
 import { Chargement } from '../ui/Elements'
 
@@ -23,11 +24,22 @@ const PORTEES: Record<string, string> = {
   personnel: 'Espace personnel',
 }
 
-/** Sceau de la République et nom de l'application (comme sur l'application DGCPT). */
+/** Bande vert-jaune-bleu, comme en tête du site du ministère. */
+export function BandeTricolore() {
+  return (
+    <div className="flex h-1.5 w-full" aria-hidden="true">
+      <span className="flex-1 bg-[#009e60]" />
+      <span className="flex-1 bg-soleil-400" />
+      <span className="flex-1 bg-[#3a75c4]" />
+    </div>
+  )
+}
+
+/** Emblème officiel (sceau sur fond de drapeau) et nom de l'application. */
 export function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <div className="flex items-center gap-2.5">
-      <img src="/logo/sceau-gabon.png" alt="Sceau de la République gabonaise" className="h-10 w-10 shrink-0 rounded-full border border-marque-800/15 bg-white p-0.5 shadow-sm" />
+      <img src="/logo/embleme-men.png" alt="Emblème de la République gabonaise" className="h-9 w-auto shrink-0 rounded-[3px] shadow-sm ring-1 ring-marque-800/15" />
       {!compact && (
         <div className="leading-tight">
           <p className="titre-serif text-[17px] font-bold text-marque-950">GRHMEN · MEN</p>
@@ -114,13 +126,14 @@ export default function Coque() {
           <Icone nom="aide" className="h-[17px] w-[17px]" /> Aide et guide utilisateur
         </NavLink>
       </div>
-      <p className="border-t border-marque-800/10 px-5 py-3 text-[10.5px] text-marque-900/55">République Gabonaise · Ministère de l'Éducation nationale</p>
+      <p className="border-t border-marque-800/10 px-5 py-3 text-[10px] leading-snug text-marque-900/55">République Gabonaise · {MINISTERE.nom}</p>
     </div>
   )
 
   return (
     <div className="min-h-screen lg:pl-64">
-      <aside className="no-print fixed inset-y-0 left-0 z-30 hidden w-64 lg:block">{barre}</aside>
+      <div className="no-print fixed inset-x-0 top-0 z-40"><BandeTricolore /></div>
+      <aside className="no-print fixed inset-y-0 left-0 z-30 hidden w-64 pt-1.5 lg:block">{barre}</aside>
       {menuOuvert && (
         <div className="no-print fixed inset-0 z-40 lg:hidden">
           <div className="absolute inset-0 bg-slate-900/40" onClick={() => setMenuOuvert(false)} />
@@ -128,7 +141,7 @@ export default function Coque() {
         </div>
       )}
 
-      <header className="no-print sticky top-0 z-20 flex h-[68px] items-center justify-between gap-3 border-b border-[#e6e4dc] bg-creme-50/95 px-4 backdrop-blur sm:px-6">
+      <header className="no-print sticky top-1.5 z-20 mt-1.5 flex h-[68px] items-center justify-between gap-3 border-b border-[#e6e4dc] bg-creme-50/95 px-4 backdrop-blur sm:px-6">
         <div className="flex min-w-0 items-center gap-3">
           <button type="button" className="rounded-lg p-2 text-marque-900 hover:bg-creme-100 lg:hidden" onClick={() => setMenuOuvert(true)} aria-label="Ouvrir le menu">
             <Icone nom="menu" />
@@ -136,22 +149,22 @@ export default function Coque() {
           <div className="lg:hidden">
             <Logo compact />
           </div>
-          <p className="hidden truncate text-[12.5px] text-slate-600 md:block">
+          <p className="hidden min-w-0 max-w-[30rem] truncate text-[12.5px] text-slate-600 xl:block">
             {utilisateur.profil?.libelle} — {utilisateur.etablissement?.nom ?? utilisateur.province?.nom ?? PORTEES[utilisateur.profil?.portee ?? ''] ?? ''}
           </p>
           {annee && (
             <div className="hidden items-center gap-2 sm:flex">
-              <span className="flex items-center gap-2 rounded-lg border border-[#e1ded3] bg-white px-3 py-1.5 text-[13px] font-medium text-slate-800">
+              <span className="flex items-center gap-2 whitespace-nowrap rounded-lg border border-[#e1ded3] bg-white px-3 py-1.5 text-[13px] font-medium text-slate-800">
                 <Icone nom="calendrier" className="h-4 w-4 text-marque-800" /> Année scolaire {annee.libelle as string}
               </span>
-              <span className="rounded-full bg-marque-100 px-2 py-0.5 text-[10.5px] font-bold uppercase tracking-wide text-marque-800">En cours</span>
+              <span className="whitespace-nowrap rounded-full bg-marque-100 px-2 py-0.5 text-[10.5px] font-bold uppercase tracking-wide text-marque-800">En cours</span>
             </div>
           )}
         </div>
         <div className="relative">
           <button type="button" className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 hover:bg-creme-100" onClick={() => setCompteOuvert((o) => !o)}>
             <span className="hidden text-right leading-tight sm:block">
-              <span className="block text-[13px] font-semibold text-slate-900">{utilisateur.name}</span>
+              <span className="block whitespace-nowrap text-[13px] font-semibold text-slate-900">{utilisateur.name}</span>
               <span className="block text-[11px] text-slate-500">{utilisateur.profil?.code}</span>
             </span>
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-marque-900 text-[13px] font-bold text-white">{initiales(utilisateur.name)}</span>

@@ -52,4 +52,6 @@ export interface Listes {
   etablissements: Ref[]
   profils: Ref[]
   enums: Record<string, Record<string, string>>
+  feries?: Record<string, string>
+  ministere?: { nom: string; adresse: string; telephone: string }
 }

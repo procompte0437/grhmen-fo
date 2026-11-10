@@ -33,9 +33,9 @@ export default function Certificat() {
       <article className="zone-impression carte mx-auto max-w-3xl bg-white p-10 font-serif text-[15px] leading-relaxed text-slate-900">
         <header className="grid grid-cols-2 gap-6 text-center text-xs uppercase leading-snug">
           <div>
-            <p className="font-bold">Ministère de l'Éducation nationale</p>
-            <p>Secrétariat général</p>
-            <p>Direction des ressources humaines</p>
+            <p className="font-bold">Ministère de l'Éducation nationale, de l'Instruction civique et de la Formation professionnelle</p>
+            <p>Secrétariat Général</p>
+            <p>Direction Générale des Ressources Humaines</p>
             <p className="mt-2 font-bold normal-case">{d.etablissement?.nom}</p>
           </div>
           <div>
@@ -99,7 +99,7 @@ export default function Certificat() {
             <p className="mt-1">{d.valideur?.name}</p>
           </div>
         </div>
-        <p className="mt-10 border-t pt-2 text-center text-[11px] text-slate-500">Document généré par GRHMEN — Gestion des ressources humaines du Ministère de l'Éducation nationale</p>
+        <p className="mt-10 border-t pt-2 text-center text-[11px] text-slate-500">Document généré par GRHMEN — Ministère de l'Éducation nationale · Immeuble des 9 étages, Libreville · (+241) 01 72 28 30</p>
       </article>
     </div>
   )

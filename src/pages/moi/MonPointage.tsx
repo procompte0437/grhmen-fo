@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useSession } from '../../context/AuthContext'
 import { useNotifier } from '../../context/NotificationContext'
 import { api, messageErreur } from '../../lib/api'
-import { dateFr, dateLongue, heure } from '../../lib/format'
+import { aujourdhui, dateFr, dateLongue, heure } from '../../lib/format'
 import { Alerte, Carte, CarteStat, Chargement, EnTetePage, EtatVide, Statut } from '../../components/ui/Elements'
 import Icone from '../../components/ui/Icone'
 
@@ -12,7 +12,7 @@ function moisCourant() {
 }
 
 export default function MonPointage() {
-  const { peut } = useSession()
+  const { peut, listes } = useSession()
   const notifier = useNotifier()
   const [mois, setMois] = useState(moisCourant())
   const [d, setD] = useState<any>(null)
@@ -100,6 +100,7 @@ export default function MonPointage() {
               </>
             )}
           </div>
+          {listes?.feries?.[aujourdhui()] && <p className="mx-6 mb-3 rounded-lg bg-ciel-100 px-3 py-2 text-sm font-medium text-ciel-600">Aujourd'hui est un jour férié : {listes.feries[aujourdhui()]}.</p>}
           <p className="px-6 pb-5 text-xs text-slate-500">Une arrivée plus de 15 minutes après l'heure d'ouverture est enregistrée comme un retard. Votre position est jointe au pointage si vous l'autorisez.</p>
         </div>
 
