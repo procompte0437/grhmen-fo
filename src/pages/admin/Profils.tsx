@@ -105,7 +105,18 @@ export default function Profils() {
     }
   }
 
-  if (!profils) return <Chargement />
+  if (!profils) {
+    return (
+      <div>
+        <EnTetePage
+          titre="Profils et habilitations"
+          icone="bouclier"
+          sousTitre="Attribuez les options d'accès (menu latéral) et les options de gestion (actions) à chaque profil ; les utilisateurs reçoivent un profil."
+        />
+        <Carte><Chargement /></Carte>
+      </div>
+    )
+  }
 
   const nbAcces = arbre.filter((o) => coches.has(o.id)).length
   const nbGestion = arbre.flatMap((o) => o.enfants).filter((e: any) => coches.has(e.id)).length
@@ -210,7 +221,7 @@ export default function Profils() {
               <input className="champ uppercase" value={edition.code} onChange={(e) => setEdition({ ...edition, code: e.target.value.toUpperCase() })} required />
             </Champ>
             <Champ libelle="Libellé" requis erreur={erreurs.libelle}><input className="champ" value={edition.libelle} onChange={(e) => setEdition({ ...edition, libelle: e.target.value })} required /></Champ>
-            <Champ libelle="Périmètre des données" requis aide="Détermine les données visibles : tout le ministère, une province, un établissement ou uniquement ses propres données.">
+            <Champ libelle="Périmètre des données" requis aide="Province, établissement ou données personnelles. Les profils nationaux voient tous les établissements grâce au droit « Voir tous les établissements du ministère », que l'on peut décocher dans les habilitations.">
               <Selecteur vide={false} valeur={edition.portee} onChange={(v) => setEdition({ ...edition, portee: v })} options={versOptions(listes?.enums.portees)} />
             </Champ>
             <Champ libelle="Description"><textarea className="champ min-h-20" value={edition.description ?? ''} onChange={(e) => setEdition({ ...edition, description: e.target.value })} /></Champ>

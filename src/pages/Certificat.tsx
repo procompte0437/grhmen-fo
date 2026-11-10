@@ -20,8 +20,16 @@ export default function Certificat() {
       .catch((e) => setErreur(messageErreur(e)))
   }, [id, estPrise])
 
-  if (erreur) return <Alerte ton="rouge">{erreur}</Alerte>
-  if (!d) return <Chargement />
+  if (!d) {
+    return (
+      <div>
+        <div className="no-print mb-4">
+          <button className="btn btn-secondaire" onClick={() => navigate(-1)}>← Retour</button>
+        </div>
+        {erreur ? <Alerte ton="rouge">{erreur}</Alerte> : <div className="carte mx-auto max-w-3xl"><Chargement /></div>}
+      </div>
+    )
+  }
   const a = d.agent
 
   return (

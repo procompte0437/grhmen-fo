@@ -65,7 +65,7 @@ function FormulaireEtablissement({ etab, ouvert, onFermer, onEnregistre }: { eta
 }
 
 export default function Etablissements() {
-  const { listes, peut } = useSession()
+  const { listes, peut, changerEtablissement } = useSession()
   const navigate = useNavigate()
   const l = useListe<any>('/etablissements', { q: '', type: '', province_id: '' })
   const [formulaire, setFormulaire] = useState<{ ouvert: boolean; etab?: any }>({ ouvert: false })
@@ -83,7 +83,7 @@ export default function Etablissements() {
         <Tableau
           lignes={l.lignes}
           chargement={l.chargement}
-          surLigne={(e) => navigate(`/etablissements/${e.id}`)}
+          surLigne={(e) => { changerEtablissement(e.id); navigate(`/etablissements/${e.id}`) }}
           colonnes={[
             { titre: 'Code', rendu: (e) => <span className="font-mono text-xs font-semibold">{e.code}</span> },
             { titre: 'Établissement', rendu: (e) => <div><p className="font-semibold">{e.nom}</p><p className="text-xs text-slate-500">{e.ville}</p></div> },
@@ -119,8 +119,14 @@ export function FicheEtablissement() {
   useEffect(() => {
     api.get(`/etablissements/${id}`).then((r) => setD(r.data)).catch((e) => setErreur(messageErreur(e)))
   }, [id])
-  if (erreur) return <Alerte ton="rouge">{erreur}</Alerte>
-  if (!d) return <Chargement />
+  if (!d) {
+    return (
+      <div>
+        <EnTetePage titre="Établissement" icone="ecole" actions={<Link to="/etablissements" className="btn btn-secondaire">← Retour</Link>} />
+        {erreur ? <Alerte ton="rouge">{erreur}</Alerte> : <Carte><Chargement /></Carte>}
+      </div>
+    )
+  }
   const e = d.data
   const i = d.indicateurs
   return (

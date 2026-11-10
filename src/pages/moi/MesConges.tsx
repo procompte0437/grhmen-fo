@@ -50,7 +50,18 @@ export default function MesConges() {
     }
   }
 
-  if (!d) return erreur ? <Alerte ton="rouge">{erreur}</Alerte> : <Chargement />
+  if (!d) {
+    return (
+      <div>
+        <EnTetePage
+          titre="Mes congés"
+          sousTitre="Demandes de congé et d'autorisation d'absence. Circuit : avis du chef d'établissement puis décision de l'académie ou de la DRH."
+          icone="soleil"
+        />
+        {erreur ? <Alerte ton="rouge">{erreur}</Alerte> : <Carte><Chargement /></Carte>}
+      </div>
+    )
+  }
 
   return (
     <div>

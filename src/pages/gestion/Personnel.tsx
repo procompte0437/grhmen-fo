@@ -10,10 +10,10 @@ import Icone from '../../components/ui/Icone'
 import { Pagination, Tableau, useListe } from '../../components/ui/Tableau'
 
 export default function Personnel() {
-  const { listes, peut } = useSession()
+  const { listes, peut, etablissement } = useSession()
   const notifier = useNotifier()
   const navigate = useNavigate()
-  const l = useListe<any>('/agents', { q: '', categorie: '', statut: '', etablissement_id: '', province_id: '', discipline_id: '', sexe: '' })
+  const l = useListe<any>('/agents', { q: '', categorie: '', statut: '', discipline_id: '', sexe: '' })
   const [formulaire, setFormulaire] = useState(false)
   const [export_, setExport] = useState(false)
 
@@ -39,7 +39,7 @@ export default function Personnel() {
       <EnTetePage
         titre="Personnel"
         icone="personnes"
-        sousTitre={`${l.donnees?.total ?? '…'} agent(s) — enseignants du primaire et du secondaire, personnel administratif`}
+        sousTitre={`${l.donnees?.total ?? '…'} agent(s)${etablissement ? ` de ${etablissement.nom}` : ''} — enseignants du primaire et du secondaire, personnel administratif`}
         actions={
           <>
             {peut('AGENT_EXPORTER') && (
@@ -59,8 +59,6 @@ export default function Personnel() {
         <Recherche valeur={l.filtres.q} onChange={(v) => l.filtrer('q', v)} placeholder="Nom, prénom, matricule…" />
         <Selecteur valeur={l.filtres.categorie} onChange={(v) => l.filtrer('categorie', v)} vide="Toutes les catégories" options={versOptions(listes?.enums.categories)} />
         <Selecteur valeur={l.filtres.statut} onChange={(v) => l.filtrer('statut', v)} vide="Tous les statuts" options={versOptions(listes?.enums.statuts_agent)} />
-        <Selecteur valeur={l.filtres.etablissement_id} onChange={(v) => l.filtrer('etablissement_id', v)} vide="Tous les établissements" options={(listes?.etablissements ?? []).map((e) => ({ valeur: e.id, libelle: e.nom as string }))} />
-        <Selecteur valeur={l.filtres.province_id} onChange={(v) => l.filtrer('province_id', v)} vide="Toutes les provinces" options={(listes?.provinces ?? []).map((e) => ({ valeur: e.id, libelle: e.nom as string }))} />
         <Selecteur valeur={l.filtres.discipline_id} onChange={(v) => l.filtrer('discipline_id', v)} vide="Toutes les disciplines" options={(listes?.disciplines ?? []).map((e) => ({ valeur: e.id, libelle: e.libelle as string }))} />
         <Selecteur valeur={l.filtres.sexe} onChange={(v) => l.filtrer('sexe', v)} vide="Hommes et femmes" options={[{ valeur: 'M', libelle: 'Hommes' }, { valeur: 'F', libelle: 'Femmes' }]} />
       </BarreFiltres>

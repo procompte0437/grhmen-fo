@@ -10,28 +10,28 @@ import { Pagination, Tableau, useListe } from '../../components/ui/Tableau'
 
 export default function PrisesService() {
   const { peut, badges, rafraichirBadges } = useSession()
-  const [onglet, setOnglet] = useState(peut('PRISE_SERVICE_CONFIRMER') ? 'a_confirmer' : 'attendues')
+  const [onglet, setOnglet] = useState(peut('PRISE_SERVICE_ENREGISTRER') ? 'attendues' : 'a_confirmer')
 
   return (
     <div>
-      <EnTetePage titre="Prises de service" icone="drapeau" sousTitre="Le chef d'établissement ou le censeur atteste que l'agent affecté a bien rejoint son poste. Sans prise de service, une cessation pour non-prise de service peut être générée." />
+      <EnTetePage titre="Prises de service" icone="drapeau" sousTitre="L'administrateur, la DRH, le gestionnaire RH ou le chef d'établissement enregistre la prise de service d'un agent affecté, depuis l'onglet « Agents attendus ». L'agent peut aussi la déclarer lui-même. Sans prise de service, une cessation pour non-prise de service peut être générée." />
       <Onglets
         actif={onglet}
         onChange={setOnglet}
         onglets={[
-          ...(peut('PRISE_SERVICE_CONFIRMER') ? [{ cle: 'a_confirmer', libelle: 'À confirmer', compteur: badges.PRISES_SERVICE }] : []),
           { cle: 'attendues', libelle: 'Agents attendus (non encore pris service)' },
+          ...(peut('PRISE_SERVICE_CONFIRMER') ? [{ cle: 'a_confirmer', libelle: 'À confirmer', compteur: badges.PRISES_SERVICE }] : []),
           { cle: 'historique', libelle: 'Historique' },
         ]}
       />
-      {onglet === 'a_confirmer' && <ListePrises statut="declaree" onChange={rafraichirBadges} />}
+      {onglet === 'a_confirmer' && <ListePrises statut="declaree" onChange={rafraichirBadges} onVoirAttendus={peut('PRISE_SERVICE_ENREGISTRER') ? () => setOnglet('attendues') : undefined} />}
       {onglet === 'attendues' && <Attendues onChange={rafraichirBadges} />}
       {onglet === 'historique' && <ListePrises statut="" onChange={rafraichirBadges} />}
     </div>
   )
 }
 
-function ListePrises({ statut, onChange }: { statut: string; onChange: () => void }) {
+function ListePrises({ statut, onChange, onVoirAttendus }: { statut: string; onChange: () => void; onVoirAttendus?: () => void }) {
   const { peut } = useSession()
   const l = useListe<any>('/prises-service', { q: '', statut })
   const [decision, setDecision] = useState<DemandeDecision | null>(null)
@@ -47,7 +47,7 @@ function ListePrises({ statut, onChange }: { statut: string; onChange: () => voi
         <Tableau
           lignes={l.lignes}
           chargement={l.chargement}
-          vide={statut === 'declaree' ? 'Aucune prise de service en attente de confirmation.' : 'Aucune prise de service.'}
+          vide={statut === 'declaree' ? 'Aucune prise de service en attente de confirmation. Les agents pas encore présentés se trouvent dans « Agents attendus ».' : 'Aucune prise de service.'}
           colonnes={[
             { titre: 'N°', rendu: (p) => <span className="font-mono text-xs">{p.numero}</span> },
             { titre: 'Agent', rendu: (p) => <div><p className="font-semibold">{p.agent?.nom_complet}</p><p className="text-xs text-slate-500">{p.agent?.matricule}</p></div> },
@@ -107,13 +107,18 @@ function ListePrises({ statut, onChange }: { statut: string; onChange: () => voi
           ]}
         />
         <Pagination page={l.donnees} onPage={l.setPage} onParPage={l.changerParPage} />
+        {!l.chargement && !l.lignes.length && onVoirAttendus && (
+          <div className="flex justify-center pb-6">
+            <button type="button" className="btn btn-primaire text-sm" onClick={onVoirAttendus}>Voir les agents attendus</button>
+          </div>
+        )}
       </Carte>
       <FenetreDecision demande={decision} onFermer={() => setDecision(null)} onTermine={() => { l.recharger(); onChange() }} />
     </>
   )
 }
 
-/** Agents affectés qui n'ont pas encore pris service : le chef peut enregistrer leur prise de service. */
+/** Agents affectés qui n'ont pas encore pris service : l'enregistrement se fait ici. */
 function Attendues({ onChange }: { onChange: () => void }) {
   const { peut } = useSession()
   const notifier = useNotifier()

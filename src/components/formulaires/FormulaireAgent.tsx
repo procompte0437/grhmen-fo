@@ -13,7 +13,7 @@ const VIDE = {
 const opts = (l: any[] | undefined, champ = 'libelle') => (l ?? []).map((x) => ({ valeur: x.id, libelle: (x.code && champ === 'libelle' ? `${x.libelle}` : x[champ]) as string }))
 
 export default function FormulaireAgent({ ouvert, agent, onFermer, onEnregistre }: { ouvert: boolean; agent?: any; onFermer: () => void; onEnregistre: (a: any) => void }) {
-  const { listes } = useSession()
+  const { listes, etablissement } = useSession()
   const notifier = useNotifier()
   const [f, setF] = useState<Record<string, string>>(VIDE)
   const [erreurs, setErreurs] = useState<Record<string, string>>({})
@@ -30,8 +30,8 @@ export default function FormulaireAgent({ ouvert, agent, onFermer, onEnregistre 
         valeurs[k] = agent[k] === null || agent[k] === undefined ? '' : String(agent[k])
       })
       setF(valeurs)
-    } else setF(VIDE)
-  }, [ouvert, agent?.id])
+    } else setF({ ...VIDE, etablissement_id: etablissement ? String(etablissement.id) : '' })
+  }, [ouvert, agent?.id, etablissement?.id])
 
   const maj = (k: string) => (v: string) => setF((x) => ({ ...x, [k]: v }))
   const champ = (k: string) => ({ value: f[k], onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => maj(k)(e.target.value) })

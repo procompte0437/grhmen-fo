@@ -8,7 +8,7 @@ import FormulaireAffectation from '../../components/formulaires/FormulaireAffect
 import FormulaireAgent from '../../components/formulaires/FormulaireAgent'
 import FormulaireCessation from '../../components/formulaires/FormulaireCessation'
 import { FenetreDecision, type DemandeDecision } from '../../components/ui/Decision'
-import { Alerte, Champ, Chargement, EnTetePage, Modale, Selecteur } from '../../components/ui/Elements'
+import { Alerte, Carte, Champ, Chargement, EnTetePage, Modale, Selecteur } from '../../components/ui/Elements'
 import Icone from '../../components/ui/Icone'
 
 export default function FicheAgent() {
@@ -32,8 +32,14 @@ export default function FicheAgent() {
   }, [id])
   useEffect(charger, [charger])
 
-  if (erreur) return <Alerte ton="rouge">{erreur}</Alerte>
-  if (!d) return <Chargement />
+  if (!d) {
+    return (
+      <div>
+        <EnTetePage titre="Dossier de l'agent" icone="dossier" actions={<Link to="/personnel" className="btn btn-secondaire">← Retour à la liste</Link>} />
+        {erreur ? <Alerte ton="rouge">{erreur}</Alerte> : <Carte><Chargement /></Carte>}
+      </div>
+    )
+  }
   const a = d.agent
 
   const profilSuggere = () => {

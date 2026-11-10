@@ -16,7 +16,7 @@ const LIBELLES_A_TRAITER: Record<string, [string, string]> = {
 }
 
 export default function TableauBord() {
-  const { utilisateur } = useSession()
+  const { utilisateur, etablissement } = useSession()
   const [d, setD] = useState<any>(null)
   const [erreur, setErreur] = useState<string | null>(null)
 
@@ -33,10 +33,10 @@ export default function TableauBord() {
     <div>
       <EnTetePage
         titre={`${salutation}, ${utilisateur?.name.split(' ')[0]}`}
-        sousTitre={<span className="capitalize">{dateLongue(new Date().toISOString())}{d?.annee_scolaire ? ` · Année scolaire ${d.annee_scolaire}` : ''}</span>}
+        sousTitre={<span className="capitalize">{dateLongue(new Date().toISOString())}{d?.annee_scolaire ? ` · Année scolaire ${d.annee_scolaire}` : ''}{etablissement && utilisateur?.profil?.portee !== 'personnel' ? ` · ${etablissement.nom}` : ''}</span>}
       />
       {erreur && <Alerte ton="rouge">{erreur}</Alerte>}
-      {!d && !erreur && <Chargement />}
+      {!d && !erreur && <Carte><Chargement /></Carte>}
       {d?.type === 'personnel' && <TableauPersonnel d={d} />}
       {d?.type === 'gestion' && <TableauGestion d={d} />}
     </div>
@@ -73,7 +73,7 @@ function TableauGestion({ d }: { d: any }) {
     <div className="space-y-5">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <CarteStat libelle="Personnel en activité" valeur={nombre(i.effectif_actif)} detail={`${nombre(i.enseignants)} enseignants · ${nombre(i.administratifs)} administratifs`} icone="personnes" />
-        <CarteStat libelle="Présents aujourd'hui" valeur={`${i.taux_presence_jour} %`} detail={`${nombre(i.presents_aujourdhui)} présents · ${nombre(i.retards_aujourdhui)} retards · ${nombre(i.non_pointes_aujourdhui)} non pointés`} icone="horloge" ton="bleu" />
+        <CarteStat libelle={d.annee_active === false ? `Présents le ${dateFr(d.date_reference)}` : "Présents aujourd'hui"} valeur={`${i.taux_presence_jour} %`} detail={`${nombre(i.presents_aujourdhui)} présents · ${nombre(i.retards_aujourdhui)} retards · ${nombre(i.non_pointes_aujourdhui)} non pointés`} icone="horloge" ton="bleu" />
         <CarteStat libelle="En attente de prise de service" valeur={nombre(i.affectations_en_attente)} detail={`${nombre(i.non_prise_service_30j)} au-delà de 30 jours`} icone="drapeau" ton="jaune" />
         <CarteStat libelle="Établissements et structures" valeur={nombre(i.etablissements)} detail={`${nombre(i.cessations_a_valider)} cessation(s) à valider · ${nombre(i.conges_en_cours)} en congé`} icone="ecole" ton="violet" />
       </div>

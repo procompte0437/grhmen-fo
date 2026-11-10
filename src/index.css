@@ -156,3 +156,53 @@ h1,
     border: none !important;
   }
 }
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  .document-a4 {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+}
+
+.guide-corps {
+  position: relative;
+}
+
+.guide-corps::before {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: calc(50% + 8rem);
+  z-index: 0;
+  width: 340px;
+  height: 220px;
+  background: url("/logo/embleme-men.png") center / contain no-repeat;
+  opacity: 0.08;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.guide-corps > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 1023px) {
+  .guide-corps::before {
+    left: 50%;
+  }
+}
+
+@media print {
+  .guide-corps::before {
+    left: 50%;
+    width: 240px;
+    height: 160px;
+    opacity: 0.09;
+  }
+}

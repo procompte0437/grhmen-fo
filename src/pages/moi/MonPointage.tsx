@@ -58,8 +58,14 @@ export default function MonPointage() {
     }
   }
 
-  if (erreur) return <Alerte ton="rouge">{erreur}</Alerte>
-  if (!d) return <Chargement />
+  if (!d) {
+    return (
+      <div>
+        <EnTetePage titre="Mon pointage" sousTitre="Pointez votre arrivée et votre départ au poste. Le censeur ou le chef de service valide vos pointages." icone="horloge" />
+        {erreur ? <Alerte ton="rouge">{erreur}</Alerte> : <Carte><Chargement /></Carte>}
+      </div>
+    )
+  }
 
   const j = d.aujourdhui
   const s = d.synthese

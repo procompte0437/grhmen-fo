@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { useSession } from '../../context/AuthContext'
 import { useNotifier } from '../../context/NotificationContext'
 import { api, messageErreur } from '../../lib/api'
-import { aujourdhui, dateFr, debutMois, exporterCsv, heure } from '../../lib/format'
+import { useAnnee } from '../../lib/annee'
+import { aujourdhui, dateFr, exporterCsv, heure } from '../../lib/format'
 import { Alerte, BarreFiltres, Barres, Carte, CarteStat, Chargement, EnTetePage, Onglets, Recherche, Selecteur, Statut, versOptions } from '../../components/ui/Elements'
 import Icone from '../../components/ui/Icone'
 import { Pagination, Tableau, useListe } from '../../components/ui/Tableau'
@@ -40,15 +41,15 @@ export default function Presences() {
 }
 
 function Feuille({ onChange }: { onChange: () => void }) {
-  const { utilisateur, listes, peut } = useSession()
+  const { listes, peut, etablissement } = useSession()
   const notifier = useNotifier()
-  const [date, setDate] = useState(aujourdhui())
-  const [etab, setEtab] = useState(String(utilisateur?.etablissement?.id ?? ''))
+  const { annee, reference } = useAnnee()
+  const [date, setDate] = useState(reference)
+  const etab = etablissement ? String(etablissement.id) : ''
   const [d, setD] = useState<any>(null)
   const [saisie, setSaisie] = useState<Record<number, { statut: string; heure_arrivee: string; observations: string }>>({})
   const [erreur, setErreur] = useState<string | null>(null)
   const [envoi, setEnvoi] = useState(false)
-  const choixEtab = utilisateur?.profil?.portee === 'national' || utilisateur?.profil?.portee === 'provincial'
 
   const charger = useCallback(() => {
     if (!etab) return
@@ -95,14 +96,8 @@ function Feuille({ onChange }: { onChange: () => void }) {
       <div className="flex flex-wrap items-end gap-3">
         <label className="block">
           <span className="mb-1 block text-xs font-semibold text-slate-700">Date</span>
-          <input type="date" className="champ w-auto" value={date} max={aujourdhui()} onChange={(e) => setDate(e.target.value)} />
+          <input type="date" className="champ w-auto" value={date} min={annee?.date_debut} max={reference} onChange={(e) => setDate(e.target.value)} />
         </label>
-        {choixEtab && (
-          <label className="block min-w-64 flex-1 sm:flex-none">
-            <span className="mb-1 block text-xs font-semibold text-slate-700">Établissement</span>
-            <Selecteur valeur={etab} onChange={setEtab} options={(listes?.etablissements ?? []).map((e) => ({ valeur: e.id, libelle: e.nom as string }))} />
-          </label>
-        )}
         {modifiable && d && (
           <div className="ml-auto flex gap-2">
             <button className="btn btn-secondaire" onClick={toutPresent}>
@@ -117,7 +112,7 @@ function Feuille({ onChange }: { onChange: () => void }) {
       {listes?.feries?.[date] && <Alerte ton="bleu" titre="Jour férié">Le {dateFr(date)} est un jour férié ({listes.feries[date]}) : aucune présence n'est attendue.</Alerte>}
       {!etab && <Alerte ton="bleu">Choisissez un établissement pour afficher sa feuille de présence.</Alerte>}
       {erreur && <Alerte ton="rouge">{erreur}</Alerte>}
-      {etab && !d && !erreur && <Chargement />}
+      {etab && !d && !erreur && <Carte><Chargement /></Carte>}
       {d && (
         <>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
@@ -257,7 +252,8 @@ function AValider({ onChange }: { onChange: () => void }) {
 
 function Historique() {
   const { listes } = useSession()
-  const l = useListe<any>('/presences', { q: '', statut: '', etablissement_id: '', date_debut: debutMois(), date_fin: aujourdhui() })
+  const { debutMoisReference, reference } = useAnnee()
+  const l = useListe<any>('/presences', { q: '', statut: '', date_debut: debutMoisReference, date_fin: reference })
 
   const exporter = async () => {
     const r = await api.get('/presences', { params: { ...l.filtres, par_page: 5000 } })
@@ -269,7 +265,6 @@ function Historique() {
       <BarreFiltres>
         <Recherche valeur={l.filtres.q} onChange={(v) => l.filtrer('q', v)} placeholder="Agent, matricule…" />
         <Selecteur valeur={l.filtres.statut} onChange={(v) => l.filtrer('statut', v)} vide="Toutes les situations" options={versOptions(listes?.enums.statuts_presence)} />
-        <Selecteur valeur={l.filtres.etablissement_id} onChange={(v) => l.filtrer('etablissement_id', v)} vide="Tous les établissements" options={(listes?.etablissements ?? []).map((e) => ({ valeur: e.id, libelle: e.nom as string }))} />
         <input type="date" className="champ" value={l.filtres.date_debut} onChange={(e) => l.filtrer('date_debut', e.target.value)} aria-label="Du" />
         <div className="flex gap-2">
           <input type="date" className="champ" value={l.filtres.date_fin} onChange={(e) => l.filtrer('date_fin', e.target.value)} aria-label="Au" />
@@ -301,7 +296,8 @@ function Historique() {
 }
 
 function Statistiques() {
-  const [periode, setPeriode] = useState({ date_debut: debutMois(), date_fin: aujourdhui() })
+  const { debutMoisReference, reference } = useAnnee()
+  const [periode, setPeriode] = useState({ date_debut: debutMoisReference, date_fin: reference })
   const [d, setD] = useState<any>(null)
   useEffect(() => {
     setD(null)
@@ -321,7 +317,7 @@ function Statistiques() {
         </label>
       </div>
       {!d ? (
-        <Chargement />
+        <Carte><Chargement /></Carte>
       ) : (
         <div className="grid gap-5 xl:grid-cols-2">
           <Carte titre="Taux de présence par établissement">

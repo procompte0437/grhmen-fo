@@ -43,18 +43,24 @@ export default function Connexion() {
 
   if (utilisateur) return <Navigate to="/" replace />
 
-  const soumettre = async (e: FormEvent) => {
-    e.preventDefault()
+  const entrer = async (id: string, mdp: string) => {
+    setIdentifiant(id)
+    setMotDePasse(mdp)
     setErreur(null)
     setEnvoi(true)
     try {
-      await connexion(identifiant, motDePasse)
+      await connexion(id, mdp)
       navigate('/')
     } catch (err) {
       setErreur(messageErreur(err))
     } finally {
       setEnvoi(false)
     }
+  }
+
+  const soumettre = (e: FormEvent) => {
+    e.preventDefault()
+    void entrer(identifiant, motDePasse)
   }
 
   return (
@@ -110,11 +116,9 @@ export default function Connexion() {
                   <button
                     key={email}
                     type="button"
-                    className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-xs hover:bg-[#f1f4f2]"
-                    onClick={() => {
-                      setIdentifiant(email)
-                      setMotDePasse('password')
-                    }}
+                    disabled={envoi}
+                    className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-xs hover:bg-[#f1f4f2] disabled:opacity-60"
+                    onClick={() => void entrer(email, 'password')}
                   >
                     <span className="font-medium text-slate-700">{role}</span>
                     <span className="truncate text-slate-500">{email}</span>

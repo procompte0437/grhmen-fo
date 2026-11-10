@@ -11,7 +11,7 @@ import { Pagination, Tableau, useListe } from '../../components/ui/Tableau'
 
 export default function Affectations() {
   const { listes, peut } = useSession()
-  const l = useListe<any>('/affectations', { q: '', statut: '', nature: '', etablissement_id: '', province_id: '', retard_jours: '' })
+  const l = useListe<any>('/affectations', { q: '', statut: '', nature: '', retard_jours: '' })
   const [formulaire, setFormulaire] = useState<{ ouvert: boolean; affectation?: any }>({ ouvert: false })
   const [decision, setDecision] = useState<DemandeDecision | null>(null)
 
@@ -33,7 +33,6 @@ export default function Affectations() {
         <Recherche valeur={l.filtres.q} onChange={(v) => l.filtrer('q', v)} placeholder="Agent, matricule, n° de décision…" />
         <Selecteur valeur={l.filtres.statut} onChange={(v) => l.filtrer('statut', v)} vide="Tous les statuts" options={versOptions(listes?.enums.statuts_affectation)} />
         <Selecteur valeur={l.filtres.nature} onChange={(v) => l.filtrer('nature', v)} vide="Toutes les natures" options={versOptions(listes?.enums.natures_affectation)} />
-        <Selecteur valeur={l.filtres.etablissement_id} onChange={(v) => l.filtrer('etablissement_id', v)} vide="Tous les établissements" options={(listes?.etablissements ?? []).map((e) => ({ valeur: e.id, libelle: e.nom as string }))} />
         <Selecteur valeur={l.filtres.retard_jours} onChange={(v) => l.filtrer('retard_jours', v)} vide="Sans filtre de délai" options={[{ valeur: '15', libelle: 'Sans prise de service > 15 jours' }, { valeur: '30', libelle: 'Sans prise de service > 30 jours' }, { valeur: '60', libelle: 'Sans prise de service > 60 jours' }]} />
       </BarreFiltres>
       {l.erreur && <Alerte ton="rouge">{l.erreur}</Alerte>}

@@ -18,14 +18,14 @@ export function Tableau<T extends { id?: number }>({ colonnes, lignes, chargemen
   surLigne?: (l: T) => void
   selection?: { ids: number[]; basculer: (id: number) => void; tout: (ids: number[]) => void; eligible?: (l: T) => boolean }
 }) {
-  if (chargement && !lignes.length) return <Chargement />
-  if (!lignes.length) return <EtatVide texte={vide} />
+  if (!chargement && !lignes.length) return <EtatVide texte={vide} />
 
   const eligibles = selection ? lignes.filter((l) => (selection.eligible ? selection.eligible(l) : true)).map((l) => l.id as number) : []
   const toutCoche = selection && eligibles.length > 0 && eligibles.every((id) => selection.ids.includes(id))
+  const colonnesVisibles = colonnes.length + (selection ? 1 : 0)
 
   return (
-    <div className={`overflow-x-auto ${chargement ? 'opacity-60' : ''}`}>
+    <div className={`overflow-x-auto ${chargement && lignes.length ? 'opacity-60' : ''}`}>
       <table className="w-full min-w-[640px] text-left text-sm">
         <thead>
           <tr className="border-b border-slate-200 bg-slate-50/80 text-xs uppercase tracking-wide text-slate-500">
@@ -42,7 +42,13 @@ export function Tableau<T extends { id?: number }>({ colonnes, lignes, chargemen
           </tr>
         </thead>
         <tbody>
-          {lignes.map((l, i) => (
+          {chargement && !lignes.length ? (
+            <tr>
+              <td colSpan={colonnesVisibles} className="p-0">
+                <Chargement />
+              </td>
+            </tr>
+          ) : lignes.map((l, i) => (
             <tr key={cle ? cle(l) : (l.id ?? i)} className={`border-b border-slate-100 last:border-0 hover:bg-marque-50/50 ${surLigne ? 'cursor-pointer' : ''}`} onClick={surLigne ? () => surLigne(l) : undefined}>
               {selection && (
                 <td className="px-3 py-2.5" onClick={(e) => e.stopPropagation()}>

@@ -62,8 +62,14 @@ export default function MesServices() {
     }
   }
 
-  if (erreur) return <Alerte ton="rouge">{erreur}</Alerte>
-  if (!d) return <Chargement />
+  if (!d) {
+    return (
+      <div>
+        <EnTetePage titre="Ma prise de service" sousTitre="Déclarez votre prise de service à votre nouveau poste puis votre début effectif des cours." icone="drapeau" />
+        {erreur ? <Alerte ton="rouge">{erreur}</Alerte> : <Carte><Chargement /></Carte>}
+      </div>
+    )
+  }
 
   const aff = d.affectation
   const prise = d.prise_service

@@ -6,7 +6,7 @@ import Coque, { Garde } from './components/layout/Coque'
 import Connexion from './pages/Connexion'
 import MotDePasse from './pages/MotDePasse'
 import TableauBord from './pages/TableauBord'
-import Certificat from './pages/Certificat'
+import Document from './pages/Document'
 import Aide from './pages/Aide'
 import MonDossier from './pages/moi/MonDossier'
 import MesServices from './pages/moi/MesServices'
@@ -74,7 +74,8 @@ export default function App() {
               <Route path="profils" element={g('PROFILS', <Profils />)} />
               <Route path="journal" element={g('JOURNAL', <Journal />)} />
 
-              <Route path="certificats/:type/:id" element={<Certificat />} />
+              <Route path="certificats/:type/:id" element={<Document />} />
+              <Route path="documents/:type/:id" element={<Document />} />
               <Route path="*" element={<Introuvable />} />
             </Route>
           </Routes>
